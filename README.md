@@ -6,35 +6,35 @@ message.  The message types I collected are TACACS, router logs, and DHCP logs.
 You may need to tweak the grok rules and extractors a bit to fit your environment.
 
 The results of this is that each message should have a new field called "site"
-which is the site associated with an IP prefix in netbox.
+which is the Site associated with an IP prefix in Netbox.
 
 You might want to tweak the query for other data if, say, Tenant is more
-important than the site.
+important than the Site.
 
-You could probably enrich the messages with any netbox field, like Location,
+You could probably enrich the messages with any Netbox field, like Location,
 Tenant, and Site together.
 
 # Caching is essential
 
-Netbox does it's best, but graylog sees around 500 messages/sec.  The prefix
+Netbox does its best, but Graylog sees around 500 messages/sec.  The prefix
 cache I have is showing around 140 lookups/s (it varies).  There is a 98.8%
-hit rate, and netbox is getting between 1 and 5 lookups/s.
+hit rate, and Netbox is getting between 1 and 5 lookups/s.
 
-If you were to try to send all these to netbox I believe it would fall over.
+If you were to try to send all these to Netbox I believe it would fall over.
 It's made for light API use and heavy interactive use, not really for a log
 server slamming it all day.
 
-I've never seen a performance issue caused by the graylog looks we have.
+I've never seen a performance issue caused by the Graylog looks we have.
 
 # Docker compose file
 
 You can use it as an example, but I recommend upgrading to the new version of
-mongodb and graylog.  You would need to change "mygrayloghost.example.com" to
+mongodb and Graylog.  You would need to change "myGrayloghost.example.com" to
 your actual domain.
 
 # filebeat + syslog-ng
 
-We used filebeat to pull the logs from text files into graylog.  We used
+We used filebeat to pull the logs from text files into Graylog.  We used
 logstash output for reasons I can't remember, but I believe it was the only
 one I could get to log the right format.  I remember wanting to write directly
 from syslog-ng to elastic, or from filebeat directly to elastic, but both of
@@ -74,7 +74,7 @@ destination smartzone {
 ```
 
 This will automatically role to the new file each night at midnight.  Filebeat
-will notice the new file and start pushing it to graylog.
+will notice the new file and start pushing it to Graylog.
 
 You can write a cron job that will cleanup old files.  This is what we used:
 

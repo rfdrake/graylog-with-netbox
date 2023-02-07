@@ -1,0 +1,18 @@
+I set the indices to be very small.  The main thing about the log server was
+that we retained text logs for 2yrs, but only needed to look back for maybe a
+couple of weeks for most things.
+
+It's quicker to have elasticsearch only index what you really want to look at.
+
+These were the settings for my Default index set.  I suspect some of it is
+incorrect because I don't understand all the fields, but this is to give you
+an example of small indices.
+
+Index shards: 4
+Index replicas: 0
+Max number of segments: 1
+Field type refresh interval: 4
+Select rotation strategy: Index Size
+Max size per index (in bytes): 1.0GiB
+Select retention strategy: Delete Index
+Max number of indices: 3

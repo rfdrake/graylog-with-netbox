@@ -1,0 +1,36 @@
+Wireshark OUI
+
+Data Adapter: Wireshark OUI (wireshark-oui)
+Cache: OUI (oui)
+
+Cache config:
+    Maximum Entries: 100000
+    Expire after access: 1 days
+    Expire after write: 5 days
+
+Data adapter config:
+    Title: Wireshark OUI
+    Name: wireshark-oui
+    File URL: https://gitlab.com/wireshark/wireshark/-/raw/master/manuf
+    Refresh Interval: 86400
+    Separator: \t
+    Line Separator: \n
+    Quote character: "
+    Ignore characters: #
+    Key column: 0
+    Value column: 1
+
+    check "Allow case-insensitive lookups"
+
+
+Netbox cache config:
+    Maximum entries 1000000
+    Expire after: 96 hours
+
+Netbox data adapter:
+    Lookup URL: https://ipam.g-mon.net/api/ipam/prefixes/?contains=${key}
+    Single value JSONPath: $.results[-1].site.name
+    HTTP Headers: Authorization Token ...
+    HTTP User-Agent: Graylog Lookup - https://www.graylog.org/
+
+

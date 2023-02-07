@@ -1,0 +1,208 @@
+{
+  "extractors": [
+    {
+      "title": "CISCO_MNEMONIC",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 13,
+      "cursor_strategy": "copy",
+      "source_field": "CISCO_MNEMONIC",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{CISCO_MNEMONIC_FIRSTPART}-\\d-%{CISCO_MNEMONIC_LASTPART}"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Create Directory data_source tag",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "filebeat_log_file_path",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "^/%{DATA}/%{DATA:data_source}/",
+        "named_captures_only": true
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "DHCP type",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 5,
+      "cursor_strategy": "copy",
+      "source_field": "DHCP_MESSAGE",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{DHCPMSG}"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "DHCP MAC_ADDRESS",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 6,
+      "cursor_strategy": "copy",
+      "source_field": "DHCP_MESSAGE",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{MAC_ADDRESS}"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "DHCP relayip",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 8,
+      "cursor_strategy": "copy",
+      "source_field": "DHCP_MESSAGE",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "via %{IP:dhcp_relay_ip}",
+        "named_captures_only": true
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Lookup OUI from DHCP MAC_ADDRESS",
+      "extractor_type": "lookup_table",
+      "converters": [],
+      "order": 12,
+      "cursor_strategy": "copy",
+      "source_field": "OUI",
+      "target_field": "VENDOR",
+      "extractor_config": {
+        "lookup_table_name": "wireshark-oui"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Lookup dhcp_relay_ip",
+      "extractor_type": "lookup_table",
+      "converters": [],
+      "order": 10,
+      "cursor_strategy": "copy",
+      "source_field": "dhcp_relay_ip",
+      "target_field": "site",
+      "extractor_config": {
+        "lookup_table_name": "netbox_prefix_lookup"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Lookup dhcp_client_ip (should be after relay_ip so things like ubr2-atl doesn't get priority)",
+      "extractor_type": "lookup_table",
+      "converters": [],
+      "order": 11,
+      "cursor_strategy": "copy",
+      "source_field": "dhcp_client_ip",
+      "target_field": "site",
+      "extractor_config": {
+        "lookup_table_name": "netbox_prefix_lookup"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Lookup source ip",
+      "extractor_type": "lookup_table",
+      "converters": [],
+      "order": 9,
+      "cursor_strategy": "copy",
+      "source_field": "source",
+      "target_field": "site",
+      "extractor_config": {
+        "lookup_table_name": "netbox_prefix_lookup"
+      },
+      "condition_type": "regex",
+      "condition_value": "^\\d+\\.\\d+\\.\\d+\\.\\d+$"
+    },
+    {
+      "title": "Ruckus syslog",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 1,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{SYSLOGTIMESTAMP} %{IP:source} %{HOSTNAME:hostname} %{USERNAME:process}: %{GREEDYDATA:MSG}",
+        "named_captures_only": true
+      },
+      "condition_type": "regex",
+      "condition_value": "^\\S+\\s+\\d+\\s+\\S+\\s+(?!10\\.22\\.5\\.146)"
+    },
+    {
+      "title": "EXTRACTOR_CISCO_SW_SYSLOG",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 3,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{SYSLOGTIMESTAMP} %{IP:source} %{TZ:TZ}: (%)%{USERNAME:CISCO_MNEMONIC}: %{GREEDYDATA:CISCO_MESSAGE}",
+        "named_captures_only": true
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "Tacacs commands",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 2,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{SYSLOGBASE} %{NUMBER}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND} [\\+]\\d+\\s+%{IP:source}\\s+%{USER}\\s+\\S+\\s+%{IP:tacacs_server_ip}\\s+(start|stop)\\s+task_id=%{NUMBER}\\s+timezone=%{NOTSPACE:UNWANTED}\\s+service=shell\\s+priv-lvl=%{NUMBER:UNWANTED}\\s+cmd=%{DATA:cmd} <cr>",
+        "named_captures_only": true
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    },
+    {
+      "title": "dhcp main extractor (nmsprime and dhcp1)",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 4,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "%{SYSLOGTIMESTAMP} %{IPORHOST:source} (nmsprime|dhcp1) %{SYSLOGPROG}: %{GREEDYDATA:DHCP_MESSAGE}",
+        "named_captures_only": true
+      },
+      "condition_type": "regex",
+      "condition_value": "(10\\.22\\.5\\.146|10\\.136\\.165\\.2)"
+    },
+    {
+      "title": "DHCP clientip \"on|for IP\"",
+      "extractor_type": "grok",
+      "converters": [],
+      "order": 7,
+      "cursor_strategy": "copy",
+      "source_field": "DHCP_MESSAGE",
+      "target_field": "",
+      "extractor_config": {
+        "grok_pattern": "(?:on|for|of) %{IP:dhcp_client_ip}",
+        "named_captures_only": true
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    }
+  ],
+  "version": "4.2.13"
+}

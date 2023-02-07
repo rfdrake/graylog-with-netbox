@@ -1,0 +1,20 @@
+filebeat.inputs:
+
+- type: filestream
+  enabled: true
+  close_inactive: 2m
+  clean_inactive: 40m
+  ignore_older: 30m
+  prospector.scanner.symlinks: false
+  # exclude files from last year manually
+  prospector.scanner.exclude_files: ['\.gz$', '2021-.*\.log' ]
+  paths:
+    - /logs/*/*.log
+  exclude_lines: ['suppressed by syslog-ng']
+
+
+output.logstash:
+  # Array of hosts to connect to.
+  hosts: ["localhost:5044"]
+  # Protocol - either `http` (default) or `https`.
+  protocol: "http"

@@ -56,7 +56,7 @@ services:
       image: jwilder/nginx-proxy
       volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /home/gmadmin/certs:/etc/nginx/certs
+      - ./certs:/etc/nginx/certs
       ports:
       - 80:80
       - 443:443

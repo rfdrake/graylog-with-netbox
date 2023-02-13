@@ -34,9 +34,9 @@ your actual domain.
 
 # filebeat + syslog-ng
 
-We used filebeat to pull the logs from text files into Graylog.  We used
-logstash output for reasons I can't remember, but I believe it was the only
-one I could get to log the right format.  I remember wanting to write directly
+We used filebeat to pull the logs from text files into Graylog.
+We used logstash output for reasons I can't remember, but the input on the
+Graylog side says it's Beats.  I remember wanting to write directly
 from syslog-ng to elastic, or from filebeat directly to elastic, but both of
 those approaches caused problems.
 

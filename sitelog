@@ -1,0 +1,41 @@
+#!/bin/bash
+
+CODE=$(echo $1 | tr '[:lower:]' '[:upper:]')
+TIME=${2:-300}
+
+source /etc/netbox_auth_token
+source /etc/graylog_auth_token
+
+NETBOX_URL=https://ipam.g-mon.net
+GRAYLOG_URL=https://log01-atl.g-mon.net
+STREAM=000000000000000000000001
+
+SITENAME=$(curl -s -k -H "Authorization: Token $NETBOX_AUTH" \
+   -H "Accept: application/json; indent=4"\
+   -H  "Content-Type: application/json" \
+   -X GET $NETBOX_URL/api/dcim/sites/?cf_site_code=$CODE | \
+ jq -r '.results[-1].name')
+
+read -r -d '' DATA <<EOF
+{
+  "streams": [ "$STREAM" ],
+  "query_string": {
+    "type": "elasticsearch",
+    "query_string": "site:$SITENAME"
+  },
+  "timerange": {
+    "type": "relative",
+    "from": $TIME
+  }
+}
+EOF
+
+echo $SITENAME
+
+curl -sk -X "POST" "$GRAYLOG_URL/api/views/search/messages" \
+     -H 'Content-Type: application/json' \
+     -H 'X-Requested-By: Sitelog/curl' \
+     -H 'Accept: text/csv' \
+     -u "$GRAYLOG_AUTH:token" \
+     -d "$DATA"
+

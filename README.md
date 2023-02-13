@@ -122,4 +122,9 @@ device if you can.
 3. Use the filebeat processed time as the actual arrival time (but attempt to
 preserve the source timestamp if possible, in case it's needed later)
 
+# sitelog script
+
+This is an example script that takes the sitecode of a site (a custom netbox
+field) and finds the site name, then returns all logs within a certain time
+period from that site.
 

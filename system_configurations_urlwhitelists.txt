@@ -1,0 +1,9 @@
+
+Title: Netbox prefix lookup
+URL: ^\Qhttps://ipam.g-mon.net/api/ipam/prefixes/?contains=\E.*?$
+Type: regex
+
+Title: Wireshark OUI
+URL: https://gitlab.com/wireshark/wireshark/-/raw/master/manuf
+Type: Exact Match
+

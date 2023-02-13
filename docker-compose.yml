@@ -33,7 +33,9 @@ services:
           GRAYLOG_PASSWORD_SECRET: "passwordpassword"
         # Password: admin
           GRAYLOG_ROOT_PASSWORD_SHA2: "anotherpasswordpassword"
-          GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
+        # THESE NEED TO BE CHANGED TO AN EXTERNAL IP ADDRESS OR HOSTNAME
+          GRAYLOG_HTTP_EXTERNAL_URI: "https://mygrayloghost.example.com/"
+          GRAYLOG_HTTP_PUBLISH_URI: "https://mygrayloghost.example.com/"
           VIRTUAL_HOST: "mygrayloghost.example.com"
           VIRTUAL_PORT: "9000"
       entrypoint: /usr/bin/tini -- wait-for-it elasticsearch:9200 --  /docker-entrypoint.sh

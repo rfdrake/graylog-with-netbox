@@ -21,7 +21,7 @@ read -r -d '' DATA <<EOF
   "streams": [ "$STREAM" ],
   "query_string": {
     "type": "elasticsearch",
-    "query_string": "site:$SITENAME"
+    "query_string": "site:\"$SITENAME\""
   },
   "timerange": {
     "type": "relative",
